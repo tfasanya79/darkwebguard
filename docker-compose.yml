@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./darkwebguard.db:/app/darkwebguard.db
+    environment:
+      - DATABASE_URL=sqlite:///./darkwebguard.db
+    ports:
+      - "8000:8000"
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: always
+
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile.crawler
+    depends_on:
+      - backend
+    volumes:
+      - ./darkwebguard.db:/app/darkwebguard.db
+    restart: always

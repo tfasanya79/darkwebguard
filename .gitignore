@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.so
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# VSCode
+.vscode/
+
+# Node
+node_modules/
+build/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Database
+*.sqlite3
+darkwebguard.db
+
+# Test/coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Frontend
+frontend/.next/
+frontend/.env.local
+frontend/.env.*
+
+# Misc
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Ignore local secrets and credentials
+secrets.*
