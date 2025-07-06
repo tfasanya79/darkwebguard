@@ -4,6 +4,7 @@ import Register from './pages/Register.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import Settings from './pages/Settings.tsx';
 import AdminView from './pages/AdminView.tsx';
+import Home from './pages/Home.tsx';
 
 const App: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
@@ -11,17 +12,29 @@ const App: React.FC = () => {
   const [view, setView] = useState<'dashboard' | 'settings' | 'admin'>('dashboard');
 
   if (!token) {
-    return showRegister ? (
-      <Register onRegister={() => setShowRegister(false)} />
-    ) : (
-      <div>
-        <Login onLogin={setToken} />
-        <div className="text-center mt-4">
-          <button className="text-blue-600 underline" onClick={() => setShowRegister(true)}>
-            Don't have an account? Register
+    if (showRegister) {
+      return <Register onRegister={() => setShowRegister(false)} />;
+    }
+    return (
+      <>
+        <Home />
+        <div className="fixed top-0 right-0 m-6 flex gap-2 z-50">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow" onClick={() => setShowRegister(true)}>
+            Register
+          </button>
+          <button className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded shadow" onClick={() => setShowRegister(false)}>
+            Login
           </button>
         </div>
-      </div>
+        {/* Show login modal if not registering */}
+        {!showRegister && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-96 max-w-full">
+              <Login onLogin={setToken} />
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 

@@ -6,15 +6,20 @@ const Register: React.FC<{ onRegister: (token: string) => void }> = ({ onRegiste
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess('');
     try {
       await register(email, password);
+      setSuccess('Registration successful! You can now log in.');
+      setEmail('');
+      setPassword('');
       // Optionally, auto-login after registration
-      onRegister(''); // You may want to trigger login flow here
+      // onRegister(''); // You may want to trigger login flow here
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Registration failed');
     } finally {
@@ -43,6 +48,7 @@ const Register: React.FC<{ onRegister: (token: string) => void }> = ({ onRegiste
           required
         />
         {error && <div className="text-red-500 mb-2 text-sm">{error}</div>}
+        {success && <div className="text-green-600 mb-2 text-sm">{success}</div>}
         <button
           type="submit"
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
