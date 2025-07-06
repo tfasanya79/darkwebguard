@@ -15,6 +15,7 @@ def get_db():
         db.close()
 
 @router.get("/", response_model=list[BrandSchema])
+@router.get("", response_model=list[BrandSchema])
 def list_brands(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     brands = db.query(Brand).filter(Brand.created_by == current_user.email).all()
     return brands

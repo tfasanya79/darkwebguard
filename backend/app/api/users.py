@@ -49,7 +49,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
+        email: Optional[str] = payload.get("sub")
         if email is None:
             raise credentials_exception
     except JWTError:
@@ -65,7 +65,12 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed_pw = get_password_hash(user.password)
-    new_user = User(email=user.email, password_hash=hashed_pw)
+    new_user = User(
+        email=user.email,
+        password_hash=hashed_pw,
+        is_admin=0,
+        subscription_status="inactive"
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
