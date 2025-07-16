@@ -1,0 +1,96 @@
+# .github/workflows/ci.yml
+# GitHub Actions CI for DarkWebGuard
+
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      SECRET_KEY: testsecret
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pip & poetry
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+      - name: Install backend dependencies
+        run: |
+          cd backend/app
+          pip install fastapi uvicorn sqlalchemy passlib[bcrypt] python-jose apscheduler pydantic[email] python-dotenv
+      - name: Lint backend
+        run: |
+          pip install flake8
+          flake8 backend/app || true
+      - name: Run backend tests
+        run: |
+          cd backend/app
+          if [ -d tests ]; then pytest tests; else echo 'No backend tests found.'; fi
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+      - name: Lint frontend
+        run: |
+          cd frontend
+          npx eslint src || true
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          if [ -d src/__tests__ ]; then npm test; else echo 'No frontend tests found.'; fi
+
+  build-crawlers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install crawler dependencies
+        run: |
+          pip install requests beautifulsoup4 python-dotenv
+      - name: Lint crawlers
+        run: |
+          pip install flake8
+          flake8 scanner/ || true
+      - name: Run crawler tests
+        run: |
+          if [ -d scanner/tests ]; then pytest scanner/tests; else echo 'No crawler tests found.'; fi
+
