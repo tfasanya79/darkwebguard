@@ -1,0 +1,32 @@
+[project]
+name = "darkwebguard"
+version = "0.1.0"
+description = "Dark Web monitoring and brand protection platform"
+authors = [
+    {name = "DarkWebGuard Team", email = "team@darkwebguard.com"}
+]
+dependencies = []
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "flake8",
+    "mypy"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
