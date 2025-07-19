@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-node_modules
-<<<<<<< HEAD
-
-=======
-=======
 # Python
 __pycache__/
 *.py[cod]
@@ -55,5 +49,3 @@ frontend/.env.*
 
 # Ignore local secrets and credentials
 secrets.*
->>>>>>> 30c2409d (code inprovement done)
->>>>>>> refs/remotes/origin/main

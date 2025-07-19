@@ -1,0 +1,74 @@
+/* DarkWebGuard App Styles */
+.dwg-landing {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dwg-header {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1e293b, #475569);
+  color: white;
+}
+
+.dwg-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.dwg-tagline {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  opacity: 0.9;
+}
+
+.dwg-cta {
+  display: inline-block;
+  background: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.dwg-cta:hover {
+  background: #2563eb;
+}
+
+.dwg-main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dwg-hero {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.dwg-hero-img {
+  max-width: 400px;
+  border-radius: 8px;
+}
+
+.dwg-hero-text h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.dwg-footer {
+  text-align: center;
+  padding: 2rem;
+  background: #f8fafc;
+  color: #64748b;
+}

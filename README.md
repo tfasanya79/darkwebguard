@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-.
-=======
 # DarkWebGuard
 
 ## MVP Feature Breakdown
@@ -166,4 +163,3 @@ Next: Implement backend structure and endpoints in `backend/app/`.
 
 # Questions?
 See `docs/` for architecture, or open an issue/PR on GitHub.
->>>>>>> 30c2409d (code inprovement done)
