@@ -2,7 +2,12 @@
 FROM python:3.12-slim AS base
 
 # Install system dependencies for building wheels and security
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc libpq-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set workdir
 WORKDIR /app
@@ -11,8 +16,10 @@ WORKDIR /app
 COPY pyproject.toml /app/
 COPY backend/app/requirements.txt /app/backend/app/requirements.txt
 
-# Install Python dependencies (use requirements.txt for reproducibility)
-RUN pip install --upgrade pip && pip install -r /app/backend/app/requirements.txt
+# Configure pip to handle SSL issues better and install Python dependencies
+RUN pip install --upgrade pip --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org \
+    -r /app/backend/app/requirements.txt
 
 # Copy application code
 COPY backend/app /app/backend/app
