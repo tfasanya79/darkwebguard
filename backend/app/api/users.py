@@ -20,7 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
 
 def get_db():
     db = SessionLocal()

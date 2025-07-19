@@ -8,15 +8,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy configuration and source
+# Copy dependency files first for better Docker cache
 COPY pyproject.toml /app/
-COPY backend/app /app/backend/app
-COPY scanner /app/scanner
+COPY backend/app/requirements.txt /app/backend/app/requirements.txt
 
-# Install Python dependencies with better error handling
+# Install Python dependencies
 RUN pip install --upgrade pip --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org \
-    sqlalchemy apscheduler passlib[bcrypt] python-dotenv requests beautifulsoup4
+    -r /app/backend/app/requirements.txt
+
+# Copy application code
+COPY backend/app /app/backend/app
+COPY scanner /app/scanner
 
 # Use non-root user for security
 RUN useradd -m crawler && chown -R crawler /app
@@ -25,5 +28,8 @@ USER crawler
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python3 -c "import sys; sys.exit(0)"
+
+# Set PYTHONPATH for imports
+ENV PYTHONPATH=/app/backend/app
 
 CMD ["python3", "scanner/scheduler.py"]

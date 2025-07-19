@@ -1,8 +1,10 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend/app')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend/app/db')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../backend/app/services')))
+
+# Add the project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+sys.path.insert(0, project_root)
+sys.path.insert(0, os.path.join(project_root, 'backend', 'app'))
 
 from backend.app.db.session import SessionLocal
 from backend.app.db.models import Brand, Alert

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from backend.app.db.session import SessionLocal
 from backend.app.db.models import Alert, Brand
 from backend.app.models.alert import Alert as AlertSchema
@@ -14,8 +15,8 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=list[AlertSchema])
-@router.get("", response_model=list[AlertSchema])
+@router.get("/", response_model=List[AlertSchema])
+@router.get("", response_model=List[AlertSchema])
 def list_alerts(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     user_brands = db.query(Brand).filter(Brand.created_by == current_user.email).all()
     brand_names = [b.name for b in user_brands]
@@ -38,7 +39,7 @@ def mark_alert_read(alert_id: int, db: Session = Depends(get_db), current_user=D
     alert = db.query(Alert).filter(Alert.id == alert_id, Alert.brand.in_(brand_names)).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found")
-    # Fix: set to 1 for integer columns
-    alert.is_read = 1
+    # Fix: set to True for boolean columns
+    alert.is_read = True
     db.commit()
     return {"ok": True}

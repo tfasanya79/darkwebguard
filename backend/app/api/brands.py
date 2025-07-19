@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from backend.app.db.session import SessionLocal
 from backend.app.db.models import Brand
 from backend.app.models.brand import Brand as BrandSchema
@@ -14,14 +15,15 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=list[BrandSchema])
-@router.get("", response_model=list[BrandSchema])
+@router.get("/", response_model=List[BrandSchema])
+@router.get("", response_model=List[BrandSchema])
 def list_brands(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     brands = db.query(Brand).filter(Brand.created_by == current_user.email).all()
     return brands
 
 @router.post("/", response_model=BrandSchema)
 def add_brand(brand: BrandSchema, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    # Override created_by with current user's email for security
     db_brand = Brand(name=brand.name, domain=brand.domain, created_by=current_user.email)
     db.add(db_brand)
     db.commit()

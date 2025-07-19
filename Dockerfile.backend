@@ -28,6 +28,9 @@ COPY backend/app /app/backend/app
 RUN useradd -m appuser && chown -R appuser /app
 USER appuser
 
+# Set PYTHONPATH for imports
+ENV PYTHONPATH=/app/backend/app
+
 # Expose port
 EXPOSE 8000
 
