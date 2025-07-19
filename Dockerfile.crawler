@@ -1,8 +1,29 @@
 # Crawler Dockerfile
 FROM python:3.12-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
+
+# Copy configuration and source
+COPY pyproject.toml /app/
 COPY backend/app /app/backend/app
 COPY scanner /app/scanner
-COPY pyproject.toml /app/
-RUN pip install --upgrade pip && pip install sqlalchemy apscheduler passlib[bcrypt]
+
+# Install Python dependencies with better error handling
+RUN pip install --upgrade pip --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org \
+    sqlalchemy apscheduler passlib[bcrypt] python-dotenv requests beautifulsoup4
+
+# Use non-root user for security
+RUN useradd -m crawler && chown -R crawler /app
+USER crawler
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python3 -c "import sys; sys.exit(0)"
+
 CMD ["python3", "scanner/scheduler.py"]

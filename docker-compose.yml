@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   backend:
     build:
@@ -8,26 +9,46 @@ services:
       - ./darkwebguard.db:/app/darkwebguard.db
     environment:
       - DATABASE_URL=sqlite:///./darkwebguard.db
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - ENV=${ENV:-development}
     ports:
       - "8000:8000"
-    restart: always
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "80:80"
-    restart: always
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   crawler:
     build:
       context: .
       dockerfile: Dockerfile.crawler
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     volumes:
       - ./darkwebguard.db:/app/darkwebguard.db
-    restart: always
+    environment:
+      - DATABASE_URL=sqlite:///./darkwebguard.db
+    restart: unless-stopped
+
+networks:
+  default:
+    name: darkwebguard-network

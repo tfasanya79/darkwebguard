@@ -37,15 +37,18 @@ async def generic_exception_handler(request: Request, exc: Exception):
 @app.on_event("startup")
 def on_startup():
     init_db()
-    # Print all registered routes for debugging (safe version)
-    print("\nRegistered routes:")
-    for route in app.routes:
-        path = getattr(route, 'path', None)
-        methods = getattr(route, 'methods', None)
-        if path and methods:
-            print(f"{path} -> {methods}")
-        elif path:
-            print(f"{path}")
+    # Print registered routes only in development
+    if not IS_PRODUCTION:
+        print("\nRegistered routes:")
+        for route in app.routes:
+            path = getattr(route, 'path', None)
+            methods = getattr(route, 'methods', None)
+            if path and methods:
+                print(f"{path} -> {methods}")
+            elif path:
+                print(f"{path}")
+    else:
+        logger.info("DarkWebGuard backend started in production mode")
 
 app.include_router(alerts.router, prefix="/api/alerts")
 app.include_router(users.router, prefix="/api/users")
@@ -59,7 +62,18 @@ def root():
 # Health check endpoint
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    try:
+        # Basic health check - could be expanded to check DB connectivity
+        import time
+        return {
+            "status": "ok",
+            "timestamp": time.time(),
+            "version": "1.0.0",
+            "environment": os.getenv("ENV", "development")
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return {"status": "error", "detail": "Health check failed"}
 
 # Debug endpoint to list all registered routes (only enabled in development)
 import sys
